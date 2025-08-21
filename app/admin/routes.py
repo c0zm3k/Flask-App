@@ -46,7 +46,7 @@ def assign_colleges(teacher_id):
     flash('Colleges assigned.', 'success')
     return redirect(url_for('admin.dashboard'))
 
-@admin_bp.route('/teachers/<int:teacher_id>/reset', methods=['POST'])
+@admin_bp.route('/teachers/<int:teacher_id>/reset', methods=['GET', 'POST'])
 @login_required(role='admin')
 def reset_teacher_password(teacher_id):
     teacher = Teacher.query.get_or_404(teacher_id)

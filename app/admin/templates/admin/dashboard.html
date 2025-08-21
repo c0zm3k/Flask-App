@@ -39,7 +39,7 @@
         </div>
         <div class="grid grid-cols-2">
           <button class="btn">Save</button>
-          <form method="post" action="{{ url_for('admin.reset_teacher_password', teacher_id=t.id) }}"></form>
+          <a href="{{ url_for('admin.reset_teacher_password', teacher_id=t.id) }}" class="btn">Reset Password</a>
         </div>
       </form>
     {% endfor %}

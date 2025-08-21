@@ -11,6 +11,7 @@ def home():
     return render_template('home.html')
 
 @auth_bp.route('/login')
+@auth_bp.route('/login_select')
 def login_select():
     return render_template('auth/login_select.html')
 
@@ -92,3 +93,7 @@ def student_login():
             return redirect(url_for('student.dashboard'))
         flash('Invalid Student ID.', 'danger')
     return render_template('auth/student_login.html')
+
+@auth_bp.route('/student/feedback')  
+def student_feedback_link():
+    return render_template('auth/student_feedback.html')

@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ title or 'Student Feedback System' }}</title>
+  <title>{{ title or 'EduPulse' }}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
   <nav class="topbar">
-    <a href="/" class="brand">SFM</a>
+    <a href="/" class="brand">EduPulse <span class="tagline">📊 Feedback that Matters</span></a>
     <div class="links">
-      <a href="{{ url_for('auth.login_select') }}">Login</a>
-      <a href="{{ url_for('auth.logout') }}">Logout</a>
+      <!-- Login/Logout links removed as requested -->
     </div>
   </nav>
   <main class="container">

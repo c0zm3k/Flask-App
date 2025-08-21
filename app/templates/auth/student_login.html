@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>Student Login</h1>
+  <p>Login to access your feedback form</p>
+  <form method="POST">
+    <div class="input">
+      <label for="student_id">Student ID</label>
+      <input type="text" id="student_id" name="student_id" required>
+    </div>
+    <button type="submit" class="btn">Login</button>
+  </form>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <h3>About Student Feedback</h3>
+  <p>Your feedback helps us improve the quality of education. After logging in, you'll be able to submit feedback for your assigned teacher.</p>
+</div>
+{% endblock %}

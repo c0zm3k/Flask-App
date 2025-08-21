@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>Student Feedback Form</h1>
+  <p>Welcome to the EduPulse Feedback System. Your opinions help us improve education quality.</p>
+  
+  <div class="alert alert-info">
+    <p><strong>How it works:</strong></p>
+    <ol>
+      <li>Login with your Student ID</li>
+      <li>Submit your feedback about your learning experience</li>
+      <li>Your feedback is sent anonymously to your teacher</li>
+    </ol>
+  </div>
+  
+  <div class="grid" style="margin-top:20px">
+    <a class="btn" href="{{ url_for('auth.student_login') }}">Login to Submit Feedback</a>
+    <a class="btn btn-outline" href="{{ url_for('auth.home') }}">Back to Home</a>
+  </div>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <h3>About Student Feedback</h3>
+  <p>Your feedback is valuable and helps us:</p>
+  <ul>
+    <li>Improve teaching methods</li>
+    <li>Enhance course materials</li>
+    <li>Create a better learning environment</li>
+    <li>Address student concerns promptly</li>
+  </ul>
+  <p><em>All feedback is confidential and used only for educational improvement purposes.</em></p>
+</div>
+{% endblock %}
