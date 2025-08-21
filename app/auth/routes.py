@@ -1,8 +1,11 @@
 from flask import render_template, request, redirect, url_for, flash, session, Blueprint
-from ..models.core import Admin, Teacher, Student
+from ..models.core import Admin, Teacher, Student, PasswordReset
 from ..models import db
+from sqlalchemy.exc import IntegrityError
 from ..utils.auth import set_user, clear_user
 from ..emailing.mailer import send_mail
+from datetime import datetime, timedelta
+import secrets
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -34,7 +37,17 @@ def admin_signup():
         inst_id = generate_institution_id(name)
         admin = Admin(institution_id=inst_id, name=name, email=email, phone=phone, username=username)
         admin.set_password(password)
-        db.session.add(admin); db.session.commit()
+        try:
+            db.session.add(admin)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            flash('Email or username already exists. Please use different credentials.', 'danger')
+            return redirect(url_for('auth.admin_signup'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Could not create account. Please try again.', 'danger')
+            return redirect(url_for('auth.admin_signup'))
         send_mail('Your Institution ID', [email], f'Hello {name}, your Institution ID is: {inst_id}')
         flash('Signup successful. Check your email for Institution ID.', 'success')
         return redirect(url_for('auth.admin_login'))
@@ -66,21 +79,53 @@ def teacher_login():
         flash('Invalid credentials.', 'danger')
     return render_template('auth/teacher_login.html')
 
-# Teacher password reset (email)
+# Teacher password reset (redirects to unified flow)
 @auth_bp.route('/teacher/reset', methods=['GET','POST'])
 def teacher_reset():
+    return redirect(url_for('auth.password_reset_request', role='teacher'))
+
+# Unified password reset: request link
+@auth_bp.route('/reset/request', methods=['GET', 'POST'])
+def password_reset_request():
+    role = request.args.get('role', 'teacher')
     if request.method == 'POST':
+        role = request.form.get('role') or role
         email = request.form['email']
-        teacher = Teacher.query.filter_by(email=email).first()
-        if teacher:
-            # In real app, generate token link
-            new_pass = 'Temp1234!'
-            teacher.set_password(new_pass); db.session.commit()
-            send_mail('Password Reset', [email], f'Your temporary password: {new_pass}')
-            flash('Temporary password sent to your email.', 'success')
-            return redirect(url_for('auth.teacher_login'))
-        flash('Email not found.', 'danger')
-    return render_template('auth/teacher_reset.html')
+        # Look up user silently
+        user_exists = bool(Admin.query.filter_by(email=email).first()) if role == 'admin' else bool(Teacher.query.filter_by(email=email).first())
+        if user_exists:
+            token = secrets.token_urlsafe(32)
+            reset = PasswordReset(role=role, email=email, token=token, expires_at=datetime.utcnow() + timedelta(hours=1))
+            db.session.add(reset); db.session.commit()
+            link = url_for('auth.password_reset', token=token, _external=True)
+            send_mail('Password Reset Request', [email], f'Click this link to reset your password: {link}\nThis link expires in 1 hour.')
+        flash('If the email exists, a reset link has been sent.', 'info')
+        return redirect(url_for('auth.login_select'))
+    return render_template('auth/password_reset_request.html', role=role)
+
+# Unified password reset: set new password
+@auth_bp.route('/reset/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+    pr = PasswordReset.query.filter_by(token=token, used=False).first()
+    if not pr or pr.expires_at < datetime.utcnow():
+        flash('Invalid or expired reset link.', 'danger')
+        return redirect(url_for('auth.login_select'))
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm = request.form['confirm']
+        if password != confirm:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('auth.password_reset', token=token))
+        user = Admin.query.filter_by(email=pr.email).first() if pr.role == 'admin' else Teacher.query.filter_by(email=pr.email).first()
+        if not user:
+            flash('Account not found.', 'danger')
+            return redirect(url_for('auth.login_select'))
+        user.set_password(password)
+        pr.used = True
+        db.session.commit()
+        flash('Password has been reset. You can log in now.', 'success')
+        return redirect(url_for('auth.login_select'))
+    return render_template('auth/password_reset.html')
 
 # --- Student login ---
 @auth_bp.route('/student/login', methods=['GET','POST'])
