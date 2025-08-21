@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Teacher Login</h2>
+  <form method="post" class="grid">
+    <input class="input" name="username" placeholder="Username" required>
+    <input class="input" name="password" placeholder="Password" type="password" required>
+    <button class="btn" type="submit">Login</button>
+  </form>
+  <p style="margin-top:10px">
+    Forgot password? <a href="{{ url_for('auth.teacher_reset') }}">Reset</a>
+  </p>
+</div>
+{% endblock %}

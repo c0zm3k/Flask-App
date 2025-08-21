@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Welcome, {{ student.name }}</h2>
+  <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+  <p><strong>College:</strong> {{ student.college.code }} &nbsp; <strong>Course:</strong> {{ student.course }}</p>
+  <p><strong>Assigned Teacher:</strong> {{ student.teacher.name }}</p>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <h3>Feedback Form</h3>
+  <form method="post" action="{{ url_for('student.submit_feedback') }}" class="grid">
+    <textarea class="input" name="feedback" rows="5" placeholder="Write your feedback..." required></textarea>
+    <button class="btn">Submit</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Teacher Password Reset</h2>
+  <form method="post" class="grid">
+    <input class="input" name="email" placeholder="Registered Email" type="email" required>
+    <button class="btn" type="submit">Send Temporary Password</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Teacher Dashboard</h2>
+  <form method="post" action="{{ url_for('teacher.add_student') }}" class="grid grid-cols-2">
+    <input class="input" name="name" placeholder="Student Name" required>
+    <input class="input" name="college_code" placeholder="College Code (e.g., C1)" required>
+    <input class="input" name="course" placeholder="Course Code (AI/CS/CC/DA/CB)" required>
+    <button class="btn">Add Student</button>
+  </form>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <div class="grid grid-cols-2">
+    <h3>My Students</h3>
+    <form method="get" action="{{ url_for('teacher.export') }}" style="text-align:right">
+      <input class="input" name="date" type="date" value="{{ (namespace(d=cycler)).d or '' }}">
+      <button class="btn" type="submit">Download Feedback (CSV)</button>
+    </form>
+  </div>
+  <table class="table">
+    <tr><th>ID</th><th>Name</th><th>College</th><th>Course</th><th class="hide-sm">Actions</th></tr>
+    {% for s in students %}
+      <tr>
+        <td>{{ s.student_id }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.college.code }}</td>
+        <td>{{ s.course }}</td>
+        <td class="hide-sm">
+          <form method="post" action="{{ url_for('teacher.delete_student', student_id=s.id) }}">
+            <button class="btn" onclick="return confirm('Delete student?')">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

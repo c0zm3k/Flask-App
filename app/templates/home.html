@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h1>Student Feedback Management</h1>
+  <p>Choose your portal:</p>
+  <div class="grid grid-cols-3">
+    <a class="btn" href="{{ url_for('admin.dashboard') }}">Admin</a>
+    <a class="btn" href="{{ url_for('teacher.dashboard') }}">Teacher</a>
+    <a class="btn" href="{{ url_for('student.dashboard') }}">Student</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Colleges</h2>
+    <form method="post" action="{{ url_for('admin.add_college') }}" class="grid">
+      <input class="input" name="name" placeholder="College Name" required>
+      <input class="input" name="code" placeholder="Code (C1, C2, ...)" required>
+      <button class="btn">Add College</button>
+    </form>
+    <table class="table" style="margin-top:12px">
+      <tr><th>Name</th><th>Code</th></tr>
+      {% for c in colleges %}<tr><td>{{ c.name }}</td><td>{{ c.code }}</td></tr>{% endfor %}
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Teachers</h2>
+    <form method="post" action="{{ url_for('admin.add_teacher') }}" class="grid">
+      <input class="input" name="name" placeholder="Name" required>
+      <input class="input" name="email" placeholder="Email" type="email" required>
+      <input class="input" name="phone" placeholder="Phone">
+      <input class="input" name="username" placeholder="Username" required>
+      <input class="input" name="password" placeholder="Temp Password" required>
+      <button class="btn">Add Teacher</button>
+    </form>
+
+    <h3 style="margin-top:12px">Assign Colleges</h3>
+    {% for t in teachers %}
+      <form method="post" action="{{ url_for('admin.assign_colleges', teacher_id=t.id) }}" class="grid">
+        <div><strong>{{ t.name }}</strong> ({{ t.username }})</div>
+        <div>
+          {% for c in colleges %}
+            <label style="margin-right:8px">
+              <input type="checkbox" name="college_codes" value="{{ c.code }}"
+                     {% if c in t.colleges %}checked{% endif %}> {{ c.code }}
+            </label>
+          {% endfor %}
+        </div>
+        <div class="grid grid-cols-2">
+          <button class="btn">Save</button>
+          <form method="post" action="{{ url_for('admin.reset_teacher_password', teacher_id=t.id) }}"></form>
+        </div>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

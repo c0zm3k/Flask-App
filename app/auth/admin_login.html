@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h2>Admin Login</h2>
+  <form method="post" class="grid">
+    <input class="input" name="institution_id" placeholder="Institution ID" required>
+    <input class="input" name="username" placeholder="Username" required>
+    <input class="input" name="password" placeholder="Password" type="password" required>
+    <button class="btn" type="submit">Login</button>
+  </form>
+</div>
+{% endblock %}
